@@ -8,11 +8,17 @@ import {
   FieldBag,
   FormError,
 } from '../types';
-import {propagateErrors, validateAll, getValues} from '../utilities';
+import {
+  propagateErrors,
+  validateAll,
+  getValues,
+  undirtyFields,
+} from '../utilities';
 
 export function useSubmit<T extends FieldBag>(
   onSubmit: SubmitHandler<FormMapping<T, 'value'>> = noopSubmission,
   fieldBag: T,
+  undirtyAfterSubmit = false,
 ) {
   const mounted = useMountedRef();
   const [submitting, setSubmitting] = useState(false);
@@ -53,8 +59,12 @@ export function useSubmit<T extends FieldBag>(
       } else {
         setSubmitErrors([]);
       }
+
+      if (undirtyAfterSubmit) {
+        undirtyFields(fields);
+      }
     },
-    [mounted, onSubmit, setErrors],
+    [mounted, onSubmit, setErrors, undirtyAfterSubmit],
   );
 
   return {submit, submitting, errors: submitErrors, setErrors};

@@ -53,19 +53,25 @@ import {useSubmit} from './submit';
  * @returns An object representing the current state of the form, with imperative methods to reset, submit, and validate. Generally, the returned properties correspond 1:1 with the specific hook for their functionality.
  *
  * @remarks
- * **Building your own:** Internally, `useForm` is a convenience wrapper over `useDirty`, `useReset`, `useValidateAll`, `useSubmit`, and `useErrorPropagation`.If you only need some of it's functionality, consider building a custom hook combining a subset of them.
+ * **Building your own:** Internally, `useForm` is a convenience wrapper over `useDirty`, `useReset`, and `useSubmit`. If you only need some of its functionality, consider building a custom hook combining a subset of them.
  * **Subforms:** You can have multiple `useForm`s wrapping different subsets of a group of fields. Using this you can submit subsections of the form independently and have all the error and dirty tracking logic "just work" together.
  */
 export function useForm<T extends FieldBag>({
   fields,
   onSubmit,
+  undirtyAfterSubmit = false,
 }: {
   fields: T;
   onSubmit?: SubmitHandler<FormMapping<T, 'value'>>;
+  undirtyAfterSubmit?: boolean;
 }): Form<T> {
   const dirty = useDirty(fields);
   const basicReset = useReset(fields);
-  const {submit, submitting, errors, setErrors} = useSubmit(onSubmit, fields);
+  const {submit, submitting, errors, setErrors} = useSubmit(
+    onSubmit,
+    fields,
+    undirtyAfterSubmit,
+  );
 
   const reset = useCallback(() => {
     setErrors([]);

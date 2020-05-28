@@ -22,4 +22,5 @@ export {
   propagateErrors,
   validateAll,
   reduceFields,
+  undirtyFields,
 } from './utilities';
